@@ -19,7 +19,6 @@ int main() {
             image(i,j,1)=G;
             image(i,j,2)=B;
         }
-        
     }
     image.saveImage("supermario.png");
     return 0;
