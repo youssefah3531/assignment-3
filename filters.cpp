@@ -21,6 +21,7 @@ int main() {
             image(x,y,0) = gray;
             image(x,y,1) = gray;
             image(x,y,2) = gray;
+            image(x,y,2) = gray;
         }
     }
 
