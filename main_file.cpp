@@ -4,6 +4,40 @@
 #include <iostream>
 using namespace std;
 string newfilename;
+void blackandwhite(string filepath)
+{
+    Image image(filepath);
+    for (int i = 0; i < image.width; i++)
+    {
+        for (int j = 0; j < image.height; j++)
+        {
+            unsigned int avg = 0;
+            for (int k = 0; k < 3; k++)
+            {
+                avg += image(i, j, k);
+            }
+            avg /= 3;
+            if (avg < 127)
+            {
+                for (int k = 0; k < 3; k++)
+                    image(i, j, k) = 0;
+            }
+            else
+                for (int k = 0; k < 3; k++)
+                    image(i, j, k) = 255;
+        }
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        image.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
 void Invert_Image(string filepath)
 {
     Image image(filepath);
@@ -31,6 +65,64 @@ void Invert_Image(string filepath)
         cin >> newfilename;
         image.saveImage(newfilename);
         cout << "Image saved sucessfully\n";
+    }
+}
+void flipimage(string &filepath)
+{
+    Image image(filepath);
+    cout << "Do you want to flip the photo?\n1-Vertically\n2-Horizontally"<<endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+
+        for (int i = 0; i < image.width; i++)
+        {
+            for (int j = 0; j < image.height / 2; j++)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    unsigned int ref = image(i, j, k);
+                    image(i, j, k) = image(i, image.height - j - 1, k);
+                    image(i, image.height - j - 1, k) = ref;
+                }
+            }
+        }
+        cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+        int num;
+        cin >> num;
+        if (num == 1)
+        {
+            cout << "Enter the name of the new file with its extention: " << endl;
+            cin >> newfilename;
+            image.saveImage(newfilename);
+            cout << "Image saved sucessfully\n";
+        }
+    }
+    else
+    {
+        for (int i = 0; i < image.width / 2; i++)
+        {
+            for (int j = 0; j < image.height; j++)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    unsigned int ref = image(i, j, k);
+                    image(i, j, k) = image(image.width - i - 1, j, k);
+                    image(image.width - i - 1, j, k) = ref;
+                }
+            }
+        }
+        cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+        int num;
+        cin >> num;
+        if (num == 1)
+        {
+            cout << "Enter the name of the new file with its extention: " << endl;
+            cin >> newfilename;
+            image.saveImage(newfilename);
+            cout << "Image saved sucessfully\n";
+        }
     }
 }
 void Rotate_Image_90(string filepath)
@@ -176,15 +268,23 @@ int main()
         cout << "##########Welcome to our filter Application##########" << endl;
         cout << "#####################################################" << endl;
         cout << "Please load the photo (enter the full path of image): " << endl;
-        string filepath ="";
+        string filepath = "";
         int num;
         getline(cin >> ws, filepath);
         cout << "Which filter do you want?" << endl;
         cout << "1-Grey Scale\n2-Black and White\n3-Invert Image\n4-Merge Images\n5-Flip Image\n6-Rotate Image" << endl;
         cin >> num;
+        if (num == 2)
+        {
+            blackandwhite(filepath);
+        }
         if (num == 3)
         {
             Invert_Image(filepath);
+        }
+        if (num == 5)
+        {
+            flipimage(filepath);
         }
         if (num == 6)
         {
@@ -204,7 +304,7 @@ int main()
                 Rotate_Image_270(filepath);
             }
         }
-        cout << "Do you want to add another image?\n";
+        cout << "Do you want to add another image?\n1-YES\n2-NO"<<endl;
         cin >> cont;
         if (cont == "no")
         {
