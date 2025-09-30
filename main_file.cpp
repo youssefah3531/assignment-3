@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 string newfilename;
-void blackandwhite(string filepath)
+void blackandwhite(string &filepath)
 {
     Image image(filepath);
     for (int i = 0; i < image.width; i++)
@@ -38,7 +38,7 @@ void blackandwhite(string filepath)
         cout << "Image saved sucessfully\n";
     }
 }
-void Invert_Image(string filepath)
+void Invert_Image(string &filepath)
 {
     Image image(filepath);
     for (int i = 0; i < image.width; i++)
@@ -125,7 +125,7 @@ void flipimage(string &filepath)
         }
     }
 }
-void Rotate_Image_90(string filepath)
+void Rotate_Image_90(string &filepath)
 {
     Image image(filepath);
     Image image2(image.height, image.width);
@@ -154,7 +154,7 @@ void Rotate_Image_90(string filepath)
         cout << "Image saved sucessfully\n";
     }
 }
-void Rotate_Image_180(string filepath)
+void Rotate_Image_180(string &filepath)
 
 {
     Image image(filepath);
@@ -199,7 +199,7 @@ void Rotate_Image_180(string filepath)
         cout << "Image saved sucessfully\n";
     }
 }
-void Rotate_Image_270(string filepath)
+void Rotate_Image_270(string &filepath)
 {
     Image image(filepath);
     Image image2(image.height, image.width);
@@ -261,8 +261,8 @@ void Rotate_Image_270(string filepath)
 
 int main()
 {
-    string cont = "yes";
-    while (cont == "yes")
+    int cont = 1;
+    while (cont == 1)
     {
         cout << "#####################################################" << endl;
         cout << "##########Welcome to our filter Application##########" << endl;
@@ -306,7 +306,7 @@ int main()
         }
         cout << "Do you want to add another image?\n1-YES\n2-NO"<<endl;
         cin >> cont;
-        if (cont == "no")
+        if (cont == 2)
         {
             break;
         }
