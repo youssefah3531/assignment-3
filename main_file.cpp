@@ -4,6 +4,42 @@
 #include <iostream>
 using namespace std;
 string newfilename;
+void Grayscale_Conversion(string &filepath)
+{
+    Image image(filepath);
+    for (int i = 0; i < image.width; i++)
+    {
+
+        for (int j = 0; j < image.height; j++)
+        {
+
+            unsigned int avg = 0;
+            for (int k = 0; k < 3; k++)
+            {
+
+                avg += image(i, j, k);
+            }
+
+            avg = avg / 3;
+
+            for (int k = 0; k < 3; k++)
+            {
+
+                image(i, j, k) = avg;
+            }
+        }
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        image.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
 void blackandwhite(string &filepath)
 {
     Image image(filepath);
@@ -67,10 +103,51 @@ void Invert_Image(string &filepath)
         cout << "Image saved sucessfully\n";
     }
 }
+void Merge_Images(string &filepath, string &filepath2)
+{
+    Image img1(filepath);
+
+    Image img2(filepath2);
+
+    int w = min(img1.width, img2.width);
+
+    int h = min(img1.height, img2.height);
+
+    Image img(w, h);
+
+    for (int i = 0; i < w; i++)
+    {
+        for (int j = 0; j < h; j++)
+        {
+            unsigned int R = 0;
+            unsigned int G = 0;
+            unsigned int B = 0;
+            R = img1(i, j, 0) + img2(i, j, 0);
+            R = R / 2;
+            G = img1(i, j, 1) + img2(i, j, 1);
+            G = G / 2;
+            B = img1(i, j, 2) + img2(i, j, 2);
+            B = B / 2;
+            img(i, j, 0) = R;
+            img(i, j, 1) = G;
+            img(i, j, 2) = B;
+        }
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        img.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
 void flipimage(string &filepath)
 {
     Image image(filepath);
-    cout << "Do you want to flip the photo?\n1-Vertically\n2-Horizontally"<<endl;
+    cout << "Do you want to flip the photo?\n1-Vertically\n2-Horizontally" << endl;
     int num;
     cin >> num;
     if (num == 1)
@@ -267,27 +344,43 @@ int main()
         cout << "#####################################################" << endl;
         cout << "##########Welcome to our filter Application##########" << endl;
         cout << "#####################################################" << endl;
-        cout << "Please load the photo (enter the full path of image): " << endl;
-        string filepath = "";
-        int num;
-        getline(cin >> ws, filepath);
         cout << "Which filter do you want?" << endl;
         cout << "1-Grey Scale\n2-Black and White\n3-Invert Image\n4-Merge Images\n5-Flip Image\n6-Rotate Image" << endl;
+        string filepath = "";
+        string filepath2 = "";
+        int num;
         cin >> num;
+        cout << "Please load the photo (enter the full path of image): " << endl;
+        if (num == 1)
+        {
+            getline(cin >> ws, filepath);
+            Grayscale_Conversion(filepath);
+        }
+
         if (num == 2)
         {
+            getline(cin >> ws, filepath);
             blackandwhite(filepath);
         }
         if (num == 3)
         {
+            getline(cin >> ws, filepath);
             Invert_Image(filepath);
+        }
+        if (num == 4)
+        {
+            getline(cin >> ws, filepath);
+            getline(cin >> ws, filepath2);
+            Merge_Images(filepath, filepath2);
         }
         if (num == 5)
         {
+            getline(cin >> ws, filepath);
             flipimage(filepath);
         }
         if (num == 6)
         {
+            getline(cin >> ws, filepath);
             int degree_rotation;
             cout << "How many degrees do you want to rotate the image?\n";
             cin >> degree_rotation;
@@ -304,7 +397,7 @@ int main()
                 Rotate_Image_270(filepath);
             }
         }
-        cout << "Do you want to add another image?\n1-YES\n2-NO"<<endl;
+        cout << "Do you want to add another image?\n1-YES\n2-NO" << endl;
         cin >> cont;
         if (cont == 2)
         {
