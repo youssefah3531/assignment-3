@@ -1,3 +1,10 @@
+//#######################################################################################################################################
+//Name                                                       id                                             Filters          
+//Youssef Ahmed Hussien                                      20240675                             Invert Image and Rotate Image
+//Ahmed Ahmed Abdelmotelb                                    20240009                              Grey Scale and Merge Image
+//Moataz Mohamed Abdo                                        20240607                             Black and white and Flib Image
+//                                                           Section 8  
+//######################################################################################################################################
 #include "Image_Class.h"
 #include <cmath>
 #include <algorithm>
