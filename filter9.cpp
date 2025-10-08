@@ -6,7 +6,7 @@ using namespace std;
 int main()
 {
     Image image("lplp.png");
-    for (int i = 0; i < image.width / 58; i++)
+    for (int i = 0; i < image.width / 35; i++)
     {
         for (int j = 0; j < image.height; j++)
         {
@@ -30,7 +30,7 @@ int main()
             image(i, j, 2) = 255;
         }
     }
-    for (int i = image.width-1; i > image.width-80; i--)
+    for (int i = image.width-1; i > image.width/1.03; i--)
     {
         for (int j = 0; j < image.height; j++)
         {
@@ -42,7 +42,7 @@ int main()
             image(i, j, 2) = 255;
         }
     }
-    for (int j = image.height - 1; j >image.height-70 ; j--)
+    for (int j = image.height - 1; j >image.height/1.026 ; j--)
     {
         for (int i = image.width - 1; i > image.width / 100; i--)
         {
@@ -54,7 +54,5 @@ int main()
             image(i, j, 2) = 255;
         }
     }
-
-
     image.saveImage("iooi.png");
 }

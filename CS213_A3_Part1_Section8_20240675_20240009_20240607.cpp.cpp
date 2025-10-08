@@ -1,10 +1,10 @@
-//#######################################################################################################################################
-//Name                                                       id                                             Filters          
-//Youssef Ahmed Hussien                                      20240675                             Invert Image and Rotate Image
-//Ahmed Ahmed Abdelmotelb                                    20240009                              Grey Scale and Merge Image
-//Moataz Mohamed Abdo                                        20240607                             Black and white and Flib Image
-//                                                           Section 8  
-//######################################################################################################################################
+// #######################################################################################################################################
+// Name                                                       id                                             Filters
+// Youssef Ahmed Hussien                                      20240675                             Invert Image and Rotate Image
+// Ahmed Ahmed Abdelmotelb                                    20240009                              Grey Scale and Merge Image
+// Moataz Mohamed Abdo                                        20240607                             Black and white and Flib Image
+//                                                            Section 8
+// ######################################################################################################################################
 #include "Image_Class.h"
 #include <cmath>
 #include <algorithm>
@@ -342,7 +342,107 @@ void Rotate_Image_270(string &filepath)
         cout << "Image saved sucessfully\n";
     }
 }
-
+void Add_Frame(string &filepath)
+{
+    Image image(filepath);
+    for (int i = 0; i < image.width / 35; i++)
+    {
+        for (int j = 0; j < image.height; j++)
+        {
+            unsigned int R = 0;
+            unsigned int G = 0;
+            unsigned int B = 0;
+            image(i, j, 0) = 0;
+            image(i, j, 1) = 0;
+            image(i, j, 2) = 255;
+        }
+    }
+    for (int i = 0; i < image.width; i++)
+    {
+        for (int j = 0; j < image.height / 45; j++)
+        {
+            unsigned int R = 0;
+            unsigned int G = 0;
+            unsigned int B = 0;
+            image(i, j, 0) = 0;
+            image(i, j, 1) = 0;
+            image(i, j, 2) = 255;
+        }
+    }
+    for (int i = image.width - 1; i > image.width / 1.03; i--)
+    {
+        for (int j = 0; j < image.height; j++)
+        {
+            unsigned int R = 0;
+            unsigned int G = 0;
+            unsigned int B = 0;
+            image(i, j, 0) = 0;
+            image(i, j, 1) = 0;
+            image(i, j, 2) = 255;
+        }
+    }
+    for (int j = image.height - 1; j > image.height / 1.026; j--)
+    {
+        for (int i = image.width - 1; i > image.width / 100; i--)
+        {
+            unsigned int R = 0;
+            unsigned int G = 0;
+            unsigned int B = 0;
+            image(i, j, 0) = 0;
+            image(i, j, 1) = 0;
+            image(i, j, 2) = 255;
+        }
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        image.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
+void Blur_Image(string &filepath)
+{
+    Image image(filepath);
+    Image image2(image.width, image.height);
+    for (int i = 20; i < image.width - 20; i++)
+    {
+        for (int j = 20; j < image.height - 20; j++)
+        {
+            int R = 0;
+            int G = 0;
+            int B = 0;
+            for (int k = i - 20; k < i + 20; k++)
+            {
+                for (int l = j - 20; l < j + 20; l++)
+                {
+                    R += image(k, l, 0);
+                    G += image(k, l, 1);
+                    B += image(k, l, 2);
+                }
+            }
+            R /= 1600;
+            G /= 1600;
+            B /= 1600;
+            image2(i, j, 0) = R;
+            image2(i, j, 1) = G;
+            image2(i, j, 2) = B;
+        }
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        image2.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
 int main()
 {
     int cont = 1;
@@ -352,7 +452,7 @@ int main()
         cout << "##########Welcome to our filter Application##########" << endl;
         cout << "#####################################################" << endl;
         cout << "Which filter do you want?" << endl;
-        cout << "1-Grey Scale\n2-Black and White\n3-Invert Image\n4-Merge Images\n5-Flip Image\n6-Rotate Image" << endl;
+        cout << "1-Grey Scale\n2-Black and White\n3-Invert Image\n4-Merge Images\n5-Flip Image\n6-Rotate Image\n9-Add Frame\n12-Blur Image" << endl;
         string filepath = "";
         string filepath2 = "";
         int num;
@@ -363,7 +463,6 @@ int main()
             getline(cin >> ws, filepath);
             Grayscale_Conversion(filepath);
         }
-
         if (num == 2)
         {
             getline(cin >> ws, filepath);
@@ -404,6 +503,17 @@ int main()
                 Rotate_Image_270(filepath);
             }
         }
+        if (num == 9)
+        {
+            getline(cin >> ws, filepath);
+            Add_Frame(filepath);
+        }
+        if (num==12)
+        {
+            getline(cin >> ws, filepath);
+            Blur_Image(filepath);
+        }
+        
         cout << "Do you want to add another image?\n1-YES\n2-NO" << endl;
         cin >> cont;
         if (cont == 2)
