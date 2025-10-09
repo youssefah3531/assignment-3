@@ -1,14 +1,15 @@
 // #######################################################################################################################################
 // Name                                                       id                                             Filters
-// Youssef Ahmed Hussien                                      20240675                             Invert Image and Rotate Image
-// Ahmed Ahmed Abdelmotelb                                    20240009                              Grey Scale and Merge Image
-// Moataz Mohamed Abdo                                        20240607                             Black and white and Flib Image
+// Youssef Ahmed Hussien                                      20240675                             Invert Image,Rotate Image,Add Frame,Blur Image
+// Ahmed Ahmed Abdelmotelb                                    20240009                             Grey Scale,Merge Image,Darken and Lighten Image
+// Moataz Mohamed Abdo                                        20240607                           Black and white,Flib Image,Crop Image,Resize Image
 //                                                            Section 8
 // ######################################################################################################################################
 #include "Image_Class.h"
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 using namespace std;
 string newfilename;
 void Grayscale_Conversion(string &filepath)
@@ -344,19 +345,17 @@ void Rotate_Image_270(string &filepath)
 }
 void Darken_Image(string &filepath)
 {
-   Image image (filepath);
+    Image image(filepath);
 
     for (int i = 0; i < image.width; i++)
     {
-    for (int j = 0; j < image.height; j++)
-    {
-        for (int k = 0; k < 3; k++)
+        for (int j = 0; j < image.height; j++)
         {
-            image(i,j,k) = image(i,j,k)*0.5;
+            for (int k = 0; k < 3; k++)
+            {
+                image(i, j, k) = image(i, j, k) * 0.5;
+            }
         }
-        
-    }
-    
     }
 
     cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
@@ -372,24 +371,21 @@ void Darken_Image(string &filepath)
 }
 void Lighten_Image(string &filepath)
 {
-    Image image (filepath);
+    Image image(filepath);
 
     for (int i = 0; i < image.width; i++)
     {
-    for (int j = 0; j < image.height; j++)
-    {
-        for (int k = 0; k < 3; k++)
+        for (int j = 0; j < image.height; j++)
         {
-            int new_value = image(i, j, k) * 1.5;
+            for (int k = 0; k < 3; k++)
+            {
+                int new_value = image(i, j, k) * 1.5;
                 if (new_value > 255)
                     new_value = 255;
 
                 image(i, j, k) = new_value;
-            
+            }
         }
-        
-    }
-    
     }
     cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
     int num;
@@ -496,31 +492,29 @@ void Add_Frame(string &filepath)
 void Detect_Image_Edges(string &filepath)
 {
     Image image(filepath);
-
-    for (int i = 0; i < image.width; i++) {
-        for (int j = 0; j < image.height; j++) {
+    for (int i = 0; i < image.width; i++)
+    {
+        for (int j = 0; j < image.height; j++)
+        {
             unsigned char avg = (image(i, j, 0) + image(i, j, 1) + image(i, j, 2)) / 3;
             image(i, j, 0) = avg;
             image(i, j, 1) = avg;
             image(i, j, 2) = avg;
         }
     }
-
     Image edgeImage = image;
-
-    for (int i = 0; i < image.width - 1; i++) {
-        for (int j = 0; j < image.height - 1; j++) {
+    for (int i = 0; i < image.width - 1; i++)
+    {
+        for (int j = 0; j < image.height - 1; j++)
+        {
             int current = image(i, j, 0);
             int right = image(i + 1, j, 0);
             int bottom = image(i, j + 1, 0);
-
             int edge_strength = abs(current - right) + abs(current - bottom);
-
             edge_strength *= 2;
-            if (edge_strength > 255) edge_strength = 255;
-
+            if (edge_strength > 255)
+                edge_strength = 255;
             int inverted = 255 - edge_strength;
-
             edgeImage(i, j, 0) = inverted;
             edgeImage(i, j, 1) = inverted;
             edgeImage(i, j, 2) = inverted;
@@ -565,31 +559,49 @@ void resize_func(string &filepath, float w, float h)
     }
 }
 void Blur_Image(string &filepath)
-{
+{   
     Image image(filepath);
     Image image2(image.width, image.height);
-    for (int i = 20; i < image.width - 20; i++)
+    int width = image.width;
+    int height = image.height;
+    int size = 70;
+    int half = size / 2;
+    vector<vector<long long>> integralR(height + 1, vector<long long>(width + 1, 0));
+    vector<vector<long long>> integralG(height + 1, vector<long long>(width + 1, 0));
+    vector<vector<long long>> integralB(height + 1, vector<long long>(width + 1, 0));
+    for (int y = 1; y <= height; y++)
     {
-        for (int j = 20; j < image.height - 20; j++)
+        for (int x = 1; x <= width; x++)
         {
-            int R = 0;
-            int G = 0;
-            int B = 0;
-            for (int k = i - 20; k < i + 20; k++)
-            {
-                for (int l = j - 20; l < j + 20; l++)
-                {
-                    R += image(k, l, 0);
-                    G += image(k, l, 1);
-                    B += image(k, l, 2);
-                }
-            }
-            R /= 1600;
-            G /= 1600;
-            B /= 1600;
-            image2(i, j, 0) = R;
-            image2(i, j, 1) = G;
-            image2(i, j, 2) = B;
+            int px = x - 1;
+            int py = y - 1;
+            long long vR = image(px, py, 0);
+            long long vG = image(px, py, 1);
+            long long vB = image(px, py, 2);
+            integralR[y][x] = vR + integralR[y - 1][x] + integralR[y][x - 1] - integralR[y - 1][x - 1];
+            integralG[y][x] = vG + integralG[y - 1][x] + integralG[y][x - 1] - integralG[y - 1][x - 1];
+            integralB[y][x] = vB + integralB[y - 1][x] + integralB[y][x - 1] - integralB[y - 1][x - 1];
+        }
+    }
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            int x0 = max(0, x - half);
+            int y0 = max(0, y - half);
+            int x1 = min(width - 1, x + half);
+            int y1 = min(height - 1, y + half);
+            int X0 = x0;
+            int Y0 = y0;
+            int X1 = x1 + 1;
+            int Y1 = y1 + 1;
+            long long totalR = integralR[Y1][X1] - integralR[Y0][X1] - integralR[Y1][X0] + integralR[Y0][X0];
+            long long totalG = integralG[Y1][X1] - integralG[Y0][X1] - integralG[Y1][X0] + integralG[Y0][X0];
+            long long totalB = integralB[Y1][X1] - integralB[Y0][X1] - integralB[Y1][X0] + integralB[Y0][X0];
+            int area = (x1 - x0 + 1) * (y1 - y0 + 1);
+            image2(x, y, 0) = (totalR / area);
+            image2(x, y, 1) = (totalG / area);
+            image2(x, y, 2) = (totalB / area);
         }
     }
     cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
@@ -678,7 +690,7 @@ int main()
                 Lighten_Image(filepath);
             }
         }
-        
+
         if (num == 8)
         {
             getline(cin >> ws, filepath);
@@ -701,9 +713,9 @@ int main()
         if (num == 10)
         {
             getline(cin >> ws, filepath);
-             Detect_Image_Edges(filepath);
+            Detect_Image_Edges(filepath);
         }
-        
+
         if (num == 11)
         {
             getline(cin >> ws, filepath);
@@ -719,7 +731,6 @@ int main()
             getline(cin >> ws, filepath);
             Blur_Image(filepath);
         }
-
         cout << "Do you want to add another image?\n1-YES\n2-NO" << endl;
         cin >> cont;
         if (cont == 2)
