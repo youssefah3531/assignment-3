@@ -342,6 +342,66 @@ void Rotate_Image_270(string &filepath)
         cout << "Image saved sucessfully\n";
     }
 }
+void Darken_Image(string &filepath)
+{
+   Image image (filepath);
+
+    for (int i = 0; i < image.width; i++)
+    {
+    for (int j = 0; j < image.height; j++)
+    {
+        for (int k = 0; k < 3; k++)
+        {
+            image(i,j,k) = image(i,j,k)*0.5;
+        }
+        
+    }
+    
+    }
+
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        image.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
+void Lighten_Image(string &filepath)
+{
+    Image image (filepath);
+
+    for (int i = 0; i < image.width; i++)
+    {
+    for (int j = 0; j < image.height; j++)
+    {
+        for (int k = 0; k < 3; k++)
+        {
+            int new_value = image(i, j, k) * 1.5;
+                if (new_value > 255)
+                    new_value = 255;
+
+                image(i, j, k) = new_value;
+            
+        }
+        
+    }
+    
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        image.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
 void Crop(string &filepath, int x, int y, int w, int h)
 {
     Image image(filepath);
@@ -433,6 +493,50 @@ void Add_Frame(string &filepath)
         cout << "Image saved sucessfully\n";
     }
 }
+void Detect_Image_Edges(string &filepath)
+{
+    Image image(filepath);
+
+    for (int i = 0; i < image.width; i++) {
+        for (int j = 0; j < image.height; j++) {
+            unsigned char avg = (image(i, j, 0) + image(i, j, 1) + image(i, j, 2)) / 3;
+            image(i, j, 0) = avg;
+            image(i, j, 1) = avg;
+            image(i, j, 2) = avg;
+        }
+    }
+
+    Image edgeImage = image;
+
+    for (int i = 0; i < image.width - 1; i++) {
+        for (int j = 0; j < image.height - 1; j++) {
+            int current = image(i, j, 0);
+            int right = image(i + 1, j, 0);
+            int bottom = image(i, j + 1, 0);
+
+            int edge_strength = abs(current - right) + abs(current - bottom);
+
+            edge_strength *= 2;
+            if (edge_strength > 255) edge_strength = 255;
+
+            int inverted = 255 - edge_strength;
+
+            edgeImage(i, j, 0) = inverted;
+            edgeImage(i, j, 1) = inverted;
+            edgeImage(i, j, 2) = inverted;
+        }
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        edgeImage.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
 void resize_func(string &filepath, float w, float h)
 {
     Image image(filepath);
@@ -508,7 +612,7 @@ int main()
         cout << "##########Welcome to our filter Application##########" << endl;
         cout << "#####################################################" << endl;
         cout << "Which filter do you want?" << endl;
-        cout << "1-Grey Scale\n2-Black and White\n3-Invert Image\n4-Merge Images\n5-Flip Image\n6-Rotate Image\n8-Crop Images\n9-Add Frame\n11-Resizing Images\n12-Blur Image" << endl;
+        cout << "1-Grey Scale\n2-Black and White\n3-Invert Image\n4-Merge Images\n5-Flip Image\n6-Rotate Image\n7-Darken and Lighten Image\n8-Crop Images\n9-Add Frame\n10-Detect Image Edges\n11-Resizing Images\n12-Blur Image" << endl;
         string filepath = "";
         string filepath2 = "";
         int num;
@@ -559,6 +663,22 @@ int main()
                 Rotate_Image_270(filepath);
             }
         }
+        if (num == 7)
+        {
+            getline(cin >> ws, filepath);
+            int Darker_Or_Lighter;
+            cout << "Do You Want The Image Darker Or Lighter?\n1-Darker\n2-Lighter" << endl;
+            cin >> Darker_Or_Lighter;
+            if (Darker_Or_Lighter == 1)
+            {
+                Darken_Image(filepath);
+            }
+            if (Darker_Or_Lighter == 2)
+            {
+                Lighten_Image(filepath);
+            }
+        }
+        
         if (num == 8)
         {
             getline(cin >> ws, filepath);
@@ -578,6 +698,12 @@ int main()
             getline(cin >> ws, filepath);
             Add_Frame(filepath);
         }
+        if (num == 10)
+        {
+            getline(cin >> ws, filepath);
+             Detect_Image_Edges(filepath);
+        }
+        
         if (num == 11)
         {
             getline(cin >> ws, filepath);
