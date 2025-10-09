@@ -342,6 +342,35 @@ void Rotate_Image_270(string &filepath)
         cout << "Image saved sucessfully\n";
     }
 }
+void Crop(string &filepath, int x, int y, int w, int h)
+{
+    Image image(filepath);
+    if (x + w > image.width)
+        w = image.width - x;
+    if (y + h > image.height)
+        h = image.height - y;
+    Image Cropedimg(w, h);
+    for (int i = 0; i < w; i++)
+    {
+        for (int j = 0; j < h; j++)
+        {
+            for (int k = 0; k < 3; k++)
+            {
+                Cropedimg(i, j, k) = image(x + i, y + j, k);
+            }
+        }
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        Cropedimg.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
 void Add_Frame(string &filepath)
 {
     Image image(filepath);
@@ -404,6 +433,33 @@ void Add_Frame(string &filepath)
         cout << "Image saved sucessfully\n";
     }
 }
+void resize_func(string &filepath, float w, float h)
+{
+    Image image(filepath);
+    Image Resizedimg(w, h);
+    float ratio_x = image.width / w;
+    float ratio_y = image.height / h;
+    for (int i = 0; i < w; i++)
+    {
+        for (int j = 0; j < h; j++)
+        {
+            for (int k = 0; k < 3; k++)
+            {
+                Resizedimg(i, j, k) = image(i * ratio_x, j * ratio_y, k);
+            }
+        }
+    }
+    cout << "Do you want to save the photo?\n1-YES\n2-NO" << endl;
+    int num;
+    cin >> num;
+    if (num == 1)
+    {
+        cout << "Enter the name of the new file with its extention: " << endl;
+        cin >> newfilename;
+        Resizedimg.saveImage(newfilename);
+        cout << "Image saved sucessfully\n";
+    }
+}
 void Blur_Image(string &filepath)
 {
     Image image(filepath);
@@ -452,7 +508,7 @@ int main()
         cout << "##########Welcome to our filter Application##########" << endl;
         cout << "#####################################################" << endl;
         cout << "Which filter do you want?" << endl;
-        cout << "1-Grey Scale\n2-Black and White\n3-Invert Image\n4-Merge Images\n5-Flip Image\n6-Rotate Image\n9-Add Frame\n12-Blur Image" << endl;
+        cout << "1-Grey Scale\n2-Black and White\n3-Invert Image\n4-Merge Images\n5-Flip Image\n6-Rotate Image\n8-Crop Images\n9-Add Frame\n11-Resizing Images\n12-Blur Image" << endl;
         string filepath = "";
         string filepath2 = "";
         int num;
@@ -503,17 +559,41 @@ int main()
                 Rotate_Image_270(filepath);
             }
         }
+        if (num == 8)
+        {
+            getline(cin >> ws, filepath);
+            int x, y, w, h;
+            cout << "Enter starting points (x,y)\nx = ";
+            cin >> x;
+            cout << "y = ";
+            cin >> y;
+            cout << "Enter the width and the height of the croped photo\nW = ";
+            cin >> w;
+            cout << "H = ";
+            cin >> h;
+            Crop(filepath, x, y, w, h);
+        }
         if (num == 9)
         {
             getline(cin >> ws, filepath);
             Add_Frame(filepath);
         }
-        if (num==12)
+        if (num == 11)
+        {
+            getline(cin >> ws, filepath);
+            float w, h;
+            cout << "Enter the width and the height to the new dimentions photo\nW = ";
+            cin >> w;
+            cout << "H = ";
+            cin >> h;
+            resize_func(filepath, w, h);
+        }
+        if (num == 12)
         {
             getline(cin >> ws, filepath);
             Blur_Image(filepath);
         }
-        
+
         cout << "Do you want to add another image?\n1-YES\n2-NO" << endl;
         cin >> cont;
         if (cont == 2)
